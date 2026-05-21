@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function LandingPage({ onStart, progress = 0 }) {
+export default function LandingPage({ onStart, progress = 0, is3DLoading = true }) {
   const [isFading, setIsFading] = useState(false);
   const [shouldRender, setShouldRender] = useState(true);
 
@@ -48,7 +48,7 @@ export default function LandingPage({ onStart, progress = 0 }) {
         <div className="h-[4vh] md:h-[8vh] min-h-[24px]"></div>
 
         {/* Explore Button or Loader */}
-        {progress < 100 ? (
+        {is3DLoading ? (
           <div className="flex flex-col items-center gap-3.5 w-64 md:w-80 animate__animated animate__fadeIn select-none">
             <div className="w-full h-2 bg-[#a62c2c]/10 rounded-full overflow-hidden shadow-inner">
               <div 

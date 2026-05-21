@@ -9,13 +9,29 @@ import { useProgress } from '@react-three/drei';
 import 'animate.css';
 
 export default function App() {
-  const { progress } = useProgress();
+  const { progress, active, total } = useProgress();
+  const [hasStartedLoading, setHasStartedLoading] = useState(false);
   const [started, setStarted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [freeReading, setFreeReading] = useState(false);
   const [audioBookActive, setAudioBookActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [manualSpeakingPage, setManualSpeakingPage] = useState(null);
+
+  useEffect(() => {
+    if (total > 0 || active) {
+      setHasStartedLoading(true);
+    }
+  }, [total, active]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setHasStartedLoading(true);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const is3DLoading = !hasStartedLoading || progress < 100;
 
   // Prefetch audio assets on startup so pages read instantly on click
   useEffect(() => {
@@ -173,7 +189,7 @@ export default function App() {
       )}
 
       {/* Landing / Intro Page Overlay */}
-      {!started && <LandingPage onStart={handleStartExperience} progress={progress} />}
+      {!started && <LandingPage onStart={handleStartExperience} progress={progress} is3DLoading={is3DLoading} />}
     </div>
   );
 }
