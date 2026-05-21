@@ -47,29 +47,7 @@ export default function Book({ currentPage, setCurrentPage, started, freeReading
     return () => clearInterval(interval);
   }, [currentPage]);
 
-  // Parallel Preloader for 3D GLTF models to allow tracking overall progress on LandingPage
-  useEffect(() => {
-    const modelsToPreload = [
-      '/models/trang1.glb',
-      '/models/trang2.glb',
-      '/models/trang3.1.glb',
-      '/models/trang3.2.glb',
-      '/models/trang3.3.glb',
-      '/models/trang4.1.glb',
-      '/models/trang4.2.glb',
-      '/models/trang5.glb',
-      '/models/trang6.glb',
-      '/models/trang7.glb'
-    ];
 
-    modelsToPreload.forEach((path) => {
-      try {
-        useGLTF.preload(path);
-      } catch (err) {
-        console.warn(`[Preloader] Failed to preload GLTF ${path}`, err);
-      }
-    });
-  }, []);
 
   // Play the last 0.7s of the page flip sound on page change
   useEffect(() => {

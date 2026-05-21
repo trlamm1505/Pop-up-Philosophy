@@ -5,8 +5,44 @@ import LandingPage from './components/LandingPage';
 import AIAssistant from './components/AIAssistant';
 import { bookContent } from './data/bookContent';
 import { playVietnameseSpeech, cancelTTS, prefetchBookAudio, unlockAudio } from './utils/tts';
-import { useProgress } from '@react-three/drei';
+import { useProgress, useTexture, useGLTF } from '@react-three/drei';
 import 'animate.css';
+
+// Preload all textures at module scope to begin downloading immediately
+const textureUrls = [
+  '/textures/bia.png',
+  '/textures/biacuoi.png',
+  '/textures/trang1left.png',
+  '/textures/trang1right.png',
+  '/textures/trang2left.png',
+  '/textures/trang2right.png',
+  '/textures/trang3left.png',
+  '/textures/trang3right.png',
+  '/textures/trang4left.png',
+  '/textures/trang4right.png',
+  '/textures/trang5left.png',
+  '/textures/trang5right.png',
+  '/textures/trang6left.png',
+  '/textures/trang6right.png',
+  '/textures/trang7left.png',
+  '/textures/trang7right.png'
+];
+textureUrls.forEach((url) => useTexture.preload(url));
+
+// Preload all 3D GLTF models at module scope to begin downloading immediately
+const modelUrls = [
+  '/models/trang1.glb',
+  '/models/trang2.glb',
+  '/models/trang3.1.glb',
+  '/models/trang3.2.glb',
+  '/models/trang3.3.glb',
+  '/models/trang4.1.glb',
+  '/models/trang4.2.glb',
+  '/models/trang5.glb',
+  '/models/trang6.glb',
+  '/models/trang7.glb'
+];
+modelUrls.forEach((url) => useGLTF.preload(url));
 
 export default function App() {
   const { progress, active, total } = useProgress();
