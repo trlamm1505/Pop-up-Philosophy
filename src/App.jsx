@@ -5,9 +5,11 @@ import LandingPage from './components/LandingPage';
 import AIAssistant from './components/AIAssistant';
 import { bookContent } from './data/bookContent';
 import { playVietnameseSpeech, cancelTTS, prefetchBookAudio, unlockAudio } from './utils/tts';
+import { useProgress } from '@react-three/drei';
 import 'animate.css';
 
 export default function App() {
+  const { progress } = useProgress();
   const [started, setStarted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [freeReading, setFreeReading] = useState(false);
@@ -171,7 +173,7 @@ export default function App() {
       )}
 
       {/* Landing / Intro Page Overlay */}
-      {!started && <LandingPage onStart={handleStartExperience} />}
+      {!started && <LandingPage onStart={handleStartExperience} progress={progress} />}
     </div>
   );
 }

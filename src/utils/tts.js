@@ -154,92 +154,6 @@ export const cancelTTS = () => {
 
 
 
-// Helper to retrieve speech synthesis voices asynchronously (prevents empty getVoices() on startup)
-const getVietnameseVoiceAsync = () => {
-  return new Promise((resolve) => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) {
-      resolve(null);
-      return;
-    }
-
-    const findVoice = () => {
-      const voices = window.speechSynthesis.getVoices();
-      return voices.find(v =>
-        v.lang.toLowerCase().includes('vi') ||
-        v.lang.toLowerCase().includes('vn')
-      );
-    };
-
-    const voice = findVoice();
-    if (voice) {
-      resolve(voice);
-      return;
-    }
-
-    // Wait for voices to be loaded asynchronously by browser
-    const onVoicesChanged = () => {
-      const v = findVoice();
-      if (v) {
-        resolve(v);
-        if (window.speechSynthesis.onvoiceschanged === onVoicesChanged) {
-          window.speechSynthesis.onvoiceschanged = null;
-        }
-      }
-    };
-    window.speechSynthesis.onvoiceschanged = onVoicesChanged;
-
-    // Timeout fallback after 1.2s to prevent hanging
-    setTimeout(() => {
-      if (window.speechSynthesis.onvoiceschanged === onVoicesChanged) {
-        window.speechSynthesis.onvoiceschanged = null;
-      }
-      resolve(findVoice());
-    }, 1200);
-  });
-};
-
-// Robust local fallback speech synthesizer using Web Speech API (with STRICT Vietnamese voice filtering)
-const playNativeSpeechFallback = async (text, onEnd, sessionId) => {
-  if (typeof window === 'undefined' || !window.speechSynthesis) {
-    if (onEnd) onEnd();
-    return false;
-  }
-
-  // Cancel any active speechSynthesis
-  window.speechSynthesis.cancel();
-
-  // Find a native Vietnamese voice asynchronously
-  const viVoice = await getVietnameseVoiceAsync();
-
-  if (sessionId !== currentSessionId) return false;
-
-  if (!viVoice) {
-    console.warn("[TTS Native] No native Vietnamese voice found. Skipping native fallback.");
-    if (onEnd) onEnd();
-    return false;
-  }
-
-  console.log("[TTS Native] Speaking native voice:", viVoice.name);
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.voice = viVoice;
-  utterance.lang = viVoice.lang;
-  utterance.rate = 1.25; // Set 25% faster speed for native speech fallback
-
-  utterance.onend = () => {
-    if (sessionId !== currentSessionId) return;
-    if (onEnd) onEnd();
-  };
-
-  utterance.onerror = (e) => {
-    if (sessionId !== currentSessionId) return;
-    console.warn("[TTS Native] Speech error:", e);
-    if (onEnd) onEnd();
-  };
-
-  window.speechSynthesis.speak(utterance);
-  return true;
-};
-
 // Fallback to Google Translate TTS
 const playFallbackSpeech = (cleanText, onEnd, isMuted, sessionId) => {
   if (isMuted) return;
@@ -324,7 +238,7 @@ const playFallbackSpeech = (cleanText, onEnd, isMuted, sessionId) => {
       if (fallbackTriggered) return;
       fallbackTriggered = true;
 
-      console.warn(`[TTS Fallback] Google TTS failed (${reason}), trying Native Speech Synthesis.`, err || "");
+      console.warn(`[TTS] Google TTS chunk ${index} failed (${reason}). Skipping chunk.`, err || "");
 
       // Cleanup the current audio listeners
       audio.onended = null;
@@ -335,27 +249,16 @@ const playFallbackSpeech = (cleanText, onEnd, isMuted, sessionId) => {
         audio.pause();
       } catch (e) { }
 
-      const nativeSuccess = await playNativeSpeechFallback(textChunk, () => {
-        if (sessionId !== currentSessionId) return;
-        index++;
-        playGoogleTTS();
-      }, sessionId);
-      if (!nativeSuccess) {
-        if (sessionId !== currentSessionId) return;
-        if (index === 0 && chunks.length === 1) {
-          if (onEnd) onEnd();
-        } else {
-          index++;
-          playGoogleTTS();
-        }
-      }
+      // Skip this chunk and move to next
+      index++;
+      playGoogleTTS();
     };
 
-    // Timeout fallback: if Google TTS fails to start, try native Vietnamese SpeechSynthesis
+    // Timeout fallback: if Google TTS fails to start, skip this chunk
     let loadTimeout = setTimeout(() => {
       if (sessionId !== currentSessionId) return;
       triggerFallback("timeout");
-    }, 2500); // Fast 2.5s threshold for rate-limit detection
+    }, 4500); // Increased to 4.5s for slow mobile networks
 
     audio.onplaying = () => {
       if (sessionId !== currentSessionId) return;

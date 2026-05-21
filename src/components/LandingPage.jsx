@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function LandingPage({ onStart }) {
+export default function LandingPage({ onStart, progress = 0 }) {
   const [isFading, setIsFading] = useState(false);
   const [shouldRender, setShouldRender] = useState(true);
 
@@ -47,15 +47,29 @@ export default function LandingPage({ onStart }) {
         {/* Explicit Spacer */}
         <div className="h-[4vh] md:h-[8vh] min-h-[24px]"></div>
 
-        {/* Explore Button */}
-        <button
-          onClick={handleStart}
-          className="group relative flex items-center gap-3 bg-[#b22222] hover:bg-[#8b0000] text-white font-sans text-xs md:text-sm font-bold tracking-wider uppercase px-6 py-3.5 md:px-8 md:py-4 rounded-full shadow-xl shadow-red-900/25 hover:shadow-red-900/40 transition-all duration-300 active:scale-95 cursor-pointer animate__animated animate__zoomIn"
-          style={{ animationDuration: '0.8s', animationDelay: '1.0s' }}
-        >
-          <span>Bắt đầu khám phá</span>
-          <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-        </button>
+        {/* Explore Button or Loader */}
+        {progress < 100 ? (
+          <div className="flex flex-col items-center gap-3.5 w-64 md:w-80 animate__animated animate__fadeIn select-none">
+            <div className="w-full h-2 bg-[#a62c2c]/10 rounded-full overflow-hidden shadow-inner">
+              <div 
+                className="h-full bg-gradient-to-r from-[#b22222] to-[#ff4500] rounded-full transition-all duration-300 ease-out" 
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="text-xs md:text-sm font-sans font-bold text-[#b22222] tracking-wider animate-pulse">
+              ĐANG TẢI MÔ HÌNH 3D... {Math.round(progress)}%
+            </span>
+          </div>
+        ) : (
+          <button
+            onClick={handleStart}
+            className="group relative flex items-center gap-3 bg-[#b22222] hover:bg-[#8b0000] text-white font-sans text-xs md:text-sm font-bold tracking-wider uppercase px-6 py-3.5 md:px-8 md:py-4 rounded-full shadow-xl shadow-red-900/25 hover:shadow-red-900/40 transition-all duration-300 active:scale-95 cursor-pointer animate__animated animate__zoomIn"
+            style={{ animationDuration: '0.8s', animationDelay: '0.2s' }}
+          >
+            <span>Bắt đầu khám phá</span>
+            <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+          </button>
+        )}
       </div>
 
       {/* Bottom spacer to preserve justify-between flexbox balance */}
