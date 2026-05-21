@@ -5,10 +5,17 @@ import * as THREE from 'three';
 import Page from './Page';
 import PopUpModel from './PopUpModel';
 
-export default function Book({ currentPage, setCurrentPage, started, freeReading, setFreeReading }) {
+export default function Book({ currentPage, setCurrentPage, started, freeReading, setFreeReading, onReady }) {
   const mainGroupRef = useRef();
   const bookRotationRef = useRef();
   const { gl } = useThree();
+
+  // Call onReady when the Book component is successfully mounted and rendered
+  useEffect(() => {
+    if (onReady) {
+      onReady();
+    }
+  }, [onReady]);
 
   // Drag states for rotating the book
   const isDragging = useRef(false);
