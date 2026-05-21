@@ -575,65 +575,14 @@ const cleanBookText = (text) => {
     .trim();
 };
 
-// Single page prefetch function
+// Single page prefetch function (No-op since Gemini is disabled)
 export const prefetchPageAudio = async (pageIndex, apiKey, backupApiKey = '') => {
-  if (audioCache[pageIndex]) return audioCache[pageIndex];
-
-  const dbCached = await getCachedAudioFromDB(pageIndex);
-  if (dbCached) {
-    audioCache[pageIndex] = dbCached;
-    return dbCached;
-  }
-
-  // Only prefetch if we have a custom API key, to preserve default key daily quotas
-  const isDefaultKey = apiKey === 'AIzaSyA5ixunTcowXo4Wg_HLzDdqC61RLoSNMe0';
-  if (isDefaultKey) return null;
-
-  // Retrieve bookContent dynamically
-  const { bookContent } = await import('../data/bookContent');
-  const rawText = bookContent(pageIndex);
-  if (!rawText) return null;
-
-  const cleanText = cleanBookText(rawText);
-
-  try {
-    const audioData = await fetchGeminiAudio(cleanText, apiKey, backupApiKey);
-    audioCache[pageIndex] = audioData;
-    await saveAudioToDB(pageIndex, audioData);
-    return audioData;
-  } catch (err) {
-    console.warn(`[TTS Prefetch] Failed for page ${pageIndex}:`, err);
-    return null;
-  }
+  return null;
 };
 
-// Prefetch all book pages sequentially in the background (Disabled for default key)
+// Prefetch all book pages sequentially in the background (No-op since Gemini is disabled)
 export const prefetchBookAudio = async () => {
-  let apiKey = localStorage.getItem('gemini_api_key');
-  if (!apiKey || apiKey === 'null' || apiKey === 'undefined' || !apiKey.startsWith('AIza')) {
-    apiKey = 'AIzaSyA5ixunTcowXo4Wg_HLzDdqC61RLoSNMe0';
-    localStorage.setItem('gemini_api_key', apiKey);
-  }
-
-  let backupApiKey = localStorage.getItem('gemini_api_key_backup') || '';
-
-  const isDefaultKey = apiKey === 'AIzaSyA5ixunTcowXo4Wg_HLzDdqC61RLoSNMe0';
-  if (isDefaultKey) {
-    console.log("[TTS] Prefetching disabled on default API key to conserve daily quota.");
-    return;
-  }
-
-  console.log("[TTS] Starting background pre-fetching with custom key...");
-  try {
-    await prefetchPageAudio(0, apiKey, backupApiKey);
-  } catch (e) { }
-
-  for (let i = 1; i <= 8; i++) {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    try {
-      await prefetchPageAudio(i, apiKey, backupApiKey);
-    } catch (e) { }
-  }
+  console.log("[TTS] Prefetching bypassed as Gemini TTS is disabled.");
 };
 
 export const playVietnameseSpeech = async (text, onEnd, isMuted, pageIndex = null) => {
@@ -643,57 +592,6 @@ export const playVietnameseSpeech = async (text, onEnd, isMuted, pageIndex = nul
 
   const cleanText = cleanBookText(text);
 
-  // Validate API key and reset if broken
-  let apiKey = localStorage.getItem('gemini_api_key');
-  if (!apiKey || apiKey === 'null' || apiKey === 'undefined' || !apiKey.startsWith('AIza')) {
-    apiKey = 'AIzaSyA5ixunTcowXo4Wg_HLzDdqC61RLoSNMe0';
-    localStorage.setItem('gemini_api_key', apiKey);
-  }
-
-  let backupApiKey = localStorage.getItem('gemini_api_key_backup') || '';
-
-  // 1. Try playing from cache if pageIndex is provided and cache exists
-  if (pageIndex !== null) {
-    if (audioCache[pageIndex]) {
-      console.log(`[TTS] Playing page ${pageIndex} instantly from memory cache.`);
-      try {
-        playPCMBuffer(audioCache[pageIndex], onEnd, sessionId);
-        return;
-      } catch (err) {
-        console.warn(`[TTS] Memory cache playback failed for page ${pageIndex}, refetching...`, err);
-      }
-    } else {
-      const dbCached = await getCachedAudioFromDB(pageIndex);
-      if (dbCached) {
-        console.log(`[TTS] Playing page ${pageIndex} instantly from IndexedDB cache.`);
-        audioCache[pageIndex] = dbCached;
-        try {
-          playPCMBuffer(dbCached, onEnd, sessionId);
-          return;
-        } catch (err) {
-          console.warn(`[TTS] IndexedDB cache playback failed for page ${pageIndex}, refetching...`, err);
-        }
-      }
-    }
-  }
-
-  // 2. Fetch live from Gemini TTS API (only for custom API keys)
-  try {
-    console.log(`[TTS] Fetching audio live for pageIndex=${pageIndex}...`);
-    const audioData = await fetchGeminiAudio(cleanText, apiKey, backupApiKey);
-
-    if (sessionId !== currentSessionId) return;
-
-    // Save to cache for next time
-    if (pageIndex !== null) {
-      audioCache[pageIndex] = audioData;
-      await saveAudioToDB(pageIndex, audioData);
-    }
-
-    playPCMBuffer(audioData, onEnd, sessionId);
-  } catch (err) {
-    if (sessionId !== currentSessionId) return;
-    console.warn("[TTS] Gemini Audio API call failed, falling back to local TTS engine...", err);
-    playFallbackSpeech(cleanText, onEnd, isMuted, sessionId);
-  }
+  // Directly play fallback speech (Google Translate -> Web Speech API)
+  playFallbackSpeech(cleanText, onEnd, isMuted, sessionId);
 };
