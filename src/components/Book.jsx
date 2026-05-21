@@ -5,17 +5,10 @@ import * as THREE from 'three';
 import Page from './Page';
 import PopUpModel from './PopUpModel';
 
-export default function Book({ currentPage, setCurrentPage, started, freeReading, setFreeReading, onReady }) {
+export default function Book({ currentPage, setCurrentPage, started, freeReading, setFreeReading }) {
   const mainGroupRef = useRef();
   const bookRotationRef = useRef();
   const { gl } = useThree();
-
-  // Call onReady when the Book component is successfully mounted and rendered
-  useEffect(() => {
-    if (onReady) {
-      onReady();
-    }
-  }, [onReady]);
 
   // Drag states for rotating the book
   const isDragging = useRef(false);
@@ -54,7 +47,7 @@ export default function Book({ currentPage, setCurrentPage, started, freeReading
     return () => clearInterval(interval);
   }, [currentPage]);
 
-  // Sequential Background Preloader for 3D GLTF models
+  // Parallel Preloader for 3D GLTF models to allow tracking overall progress on LandingPage
   useEffect(() => {
     const modelsToPreload = [
       '/models/trang1.glb',
@@ -69,30 +62,13 @@ export default function Book({ currentPage, setCurrentPage, started, freeReading
       '/models/trang7.glb'
     ];
 
-    let isComponentMounted = true;
-
-    async function loadModelsSequentially() {
-      // Delay 1 second after mount to let the landing page render smoothly first
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      for (const path of modelsToPreload) {
-        if (!isComponentMounted) break;
-        try {
-          // Preload and parse GLTF into memory cache sequentially
-          useGLTF.preload(path);
-        } catch (err) {
-          console.warn(`[BackgroundPreloader] Failed to preload GLTF ${path}`, err);
-        }
-        // Delay 1.5 seconds between loads to prevent freezing/lag
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+    modelsToPreload.forEach((path) => {
+      try {
+        useGLTF.preload(path);
+      } catch (err) {
+        console.warn(`[Preloader] Failed to preload GLTF ${path}`, err);
       }
-    }
-
-    loadModelsSequentially();
-
-    return () => {
-      isComponentMounted = false;
-    };
+    });
   }, []);
 
   // Play the last 0.7s of the page flip sound on page change

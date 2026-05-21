@@ -4,7 +4,7 @@ import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import Book from './Book';
 
-export default function BookScene({ currentPage, setCurrentPage, started, freeReading, setFreeReading, onReady }) {
+export default function BookScene({ currentPage, setCurrentPage, started, freeReading, setFreeReading }) {
   return (
     <div className="w-full h-full relative outline-none select-none">
       <Canvas
@@ -62,7 +62,6 @@ export default function BookScene({ currentPage, setCurrentPage, started, freeRe
               started={started} 
               freeReading={freeReading}
               setFreeReading={setFreeReading}
-              onReady={onReady}
             />
           </React.Suspense>
         </group>

@@ -9,8 +9,9 @@ import { useProgress } from '@react-three/drei';
 import 'animate.css';
 
 export default function App() {
-  const { progress } = useProgress();
-  const [isBookReady, setIsBookReady] = useState(false);
+  const { progress, active, total } = useProgress();
+  const [isFullyLoaded, setIsFullyLoaded] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const [started, setStarted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [freeReading, setFreeReading] = useState(false);
@@ -18,7 +19,37 @@ export default function App() {
   const [isMuted, setIsMuted] = useState(false);
   const [manualSpeakingPage, setManualSpeakingPage] = useState(null);
 
-  const is3DLoading = !isBookReady;
+  useEffect(() => {
+    if (active || total > 0) {
+      setHasStarted(true);
+    }
+  }, [active, total]);
+
+  useEffect(() => {
+    if (hasStarted && !active && progress === 100) {
+      setIsFullyLoaded(true);
+    }
+  }, [hasStarted, active, progress]);
+
+  // Fallback: If after 2.5 seconds it hasn't started loading, assume cached
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!hasStarted) {
+        setIsFullyLoaded(true);
+      }
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [hasStarted]);
+
+  // Absolute fallback: 20 seconds maximum loading time
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsFullyLoaded(true);
+    }, 20000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const is3DLoading = !isFullyLoaded;
 
   // Prefetch audio assets on startup so pages read instantly on click
   useEffect(() => {
@@ -147,7 +178,6 @@ export default function App() {
           started={started}
           freeReading={freeReading}
           setFreeReading={setFreeReading}
-          onReady={() => setIsBookReady(true)}
         />
       </div>
 
