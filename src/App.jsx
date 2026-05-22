@@ -29,20 +29,24 @@ const textureUrls = [
 ];
 textureUrls.forEach((url) => useTexture.preload(url));
 
-// Preload all 3D GLTF models at module scope to begin downloading immediately
-const modelUrls = [
-  '/models/trang1.glb',
-  '/models/trang2.glb',
-  '/models/trang3.1.glb',
-  '/models/trang3.2.glb',
-  '/models/trang3.3.glb',
-  '/models/trang4.1.glb',
-  '/models/trang4.2.glb',
-  '/models/trang5.glb',
-  '/models/trang6.glb',
-  '/models/trang7.glb'
-];
-modelUrls.forEach((url) => useGLTF.preload(url));
+const isMobileDevice = typeof window !== 'undefined' && typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+// Preload all 3D GLTF models at module scope only on desktop to save mobile memory/bandwidth
+if (!isMobileDevice) {
+  const modelUrls = [
+    '/models/trang1.glb',
+    '/models/trang2.glb',
+    '/models/trang3.1.glb',
+    '/models/trang3.2.glb',
+    '/models/trang3.3.glb',
+    '/models/trang4.1.glb',
+    '/models/trang4.2.glb',
+    '/models/trang5.glb',
+    '/models/trang6.glb',
+    '/models/trang7.glb'
+  ];
+  modelUrls.forEach((url) => useGLTF.preload(url));
+}
 
 export default function App() {
   const { progress, active, total } = useProgress();

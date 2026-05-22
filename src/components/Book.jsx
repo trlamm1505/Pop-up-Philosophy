@@ -9,6 +9,7 @@ export default function Book({ currentPage, setCurrentPage, started, freeReading
   const mainGroupRef = useRef();
   const bookRotationRef = useRef();
   const { gl } = useThree();
+  const isMobileDevice = typeof window !== 'undefined' && typeof navigator !== 'undefined' && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
 
   // Drag states for rotating the book
   const isDragging = useRef(false);
@@ -432,83 +433,87 @@ export default function Book({ currentPage, setCurrentPage, started, freeReading
         {/* PHẦN 2: KHỐI MÔ HÌNH 3D (DUY CHUYỂN CÙNG SÁCH, HƯỚNG THẲNG ĐỨNG) */}
         {/* ========================================== */}
 
-        {/* Trang 1: Monument */}
-        <PopUpModel
-          active={started && !freeReading && currentPage === 1}
-          type="monument"
-          modelPath="/models/trang1.glb"
-          preloadDelay={2000}
-        />
+        {!isMobileDevice && (
+          <>
+            {/* Trang 1: Monument */}
+            <PopUpModel
+              active={started && !freeReading && currentPage === 1}
+              type="monument"
+              modelPath="/models/trang1.glb"
+              preloadDelay={2000}
+            />
 
-        {/* Trang 2: Globe */}
-        <PopUpModel
-          active={started && !freeReading && currentPage === 2}
-          type="globe"
-          modelPath="/models/trang2.glb"
-          customScale={2.2}
-          preloadDelay={3500}
-        />
+            {/* Trang 2: Globe */}
+            <PopUpModel
+              active={started && !freeReading && currentPage === 2}
+              type="globe"
+              modelPath="/models/trang2.glb"
+              customScale={2.2}
+              preloadDelay={3500}
+            />
 
-        {/* Trang 3: 3D Models (3.1, 3.2, 3.3 rotating every 5s) */}
-        <PopUpModel
-          active={started && !freeReading && currentPage === 3 && subModelIdx3 === 0}
-          type="crystal"
-          modelPath="/models/trang3.1.glb"
-          preloadDelay={5000}
-        />
-        <PopUpModel
-          active={started && !freeReading && currentPage === 3 && subModelIdx3 === 1}
-          type="crystal"
-          modelPath="/models/trang3.2.glb"
-          preloadDelay={6500}
-        />
-        <PopUpModel
-          active={started && !freeReading && currentPage === 3 && subModelIdx3 === 2}
-          type="crystal"
-          modelPath="/models/trang3.3.glb"
-          preloadDelay={8000}
-        />
+            {/* Trang 3: 3D Models (3.1, 3.2, 3.3 rotating every 5s) */}
+            <PopUpModel
+              active={started && !freeReading && currentPage === 3 && subModelIdx3 === 0}
+              type="crystal"
+              modelPath="/models/trang3.1.glb"
+              preloadDelay={5000}
+            />
+            <PopUpModel
+              active={started && !freeReading && currentPage === 3 && subModelIdx3 === 1}
+              type="crystal"
+              modelPath="/models/trang3.2.glb"
+              preloadDelay={6500}
+            />
+            <PopUpModel
+              active={started && !freeReading && currentPage === 3 && subModelIdx3 === 2}
+              type="crystal"
+              modelPath="/models/trang3.3.glb"
+              preloadDelay={8000}
+            />
 
-        {/* Trang 4: 3D Models (4.1, 4.2 rotating every 5s) */}
-        <PopUpModel
-          active={started && !freeReading && currentPage === 4 && subModelIdx4 === 0}
-          type="crystal"
-          modelPath="/models/trang4.1.glb"
-          customScale={0.8}
-          preloadDelay={9500}
-        />
-        <PopUpModel
-          active={started && !freeReading && currentPage === 4 && subModelIdx4 === 1}
-          type="crystal"
-          modelPath="/models/trang4.2.glb"
-          customScale={0.8}
-          preloadDelay={11000}
-        />
+            {/* Trang 4: 3D Models (4.1, 4.2 rotating every 5s) */}
+            <PopUpModel
+              active={started && !freeReading && currentPage === 4 && subModelIdx4 === 0}
+              type="crystal"
+              modelPath="/models/trang4.1.glb"
+              customScale={0.8}
+              preloadDelay={9500}
+            />
+            <PopUpModel
+              active={started && !freeReading && currentPage === 4 && subModelIdx4 === 1}
+              type="crystal"
+              modelPath="/models/trang4.2.glb"
+              customScale={0.8}
+              preloadDelay={11000}
+            />
 
-        {/* Trang 5: Globe/Crystal */}
-        <PopUpModel
-          active={started && !freeReading && currentPage === 5}
-          type="globe"
-          modelPath="/models/trang5.glb"
-          customScale={1.25}
-          preloadDelay={12500}
-        />
+            {/* Trang 5: Globe/Crystal */}
+            <PopUpModel
+              active={started && !freeReading && currentPage === 5}
+              type="globe"
+              modelPath="/models/trang5.glb"
+              customScale={1.25}
+              preloadDelay={12500}
+            />
 
-        {/* Trang 6: Monument */}
-        <PopUpModel
-          active={started && !freeReading && currentPage === 6}
-          type="monument"
-          modelPath="/models/trang6.glb"
-          preloadDelay={14000}
-        />
+            {/* Trang 6: Monument */}
+            <PopUpModel
+              active={started && !freeReading && currentPage === 6}
+              type="monument"
+              modelPath="/models/trang6.glb"
+              preloadDelay={14000}
+            />
 
-        {/* Trang 7: Globe */}
-        <PopUpModel
-          active={started && !freeReading && currentPage === 7}
-          type="globe"
-          modelPath="/models/trang7.glb"
-          preloadDelay={15500}
-        />
+            {/* Trang 7: Globe */}
+            <PopUpModel
+              active={started && !freeReading && currentPage === 7}
+              type="globe"
+              modelPath="/models/trang7.glb"
+              preloadDelay={15500}
+            />
+          </>
+        )}
       </group>
     </>
   );
