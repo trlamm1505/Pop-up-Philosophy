@@ -40,10 +40,7 @@ export default function UI({
   ];
 
   const [selectedItemIdx, setSelectedItemIdx] = useState(0);
-  const isIOSChrome = typeof window !== 'undefined' && typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent) && /CriOS/i.test(navigator.userAgent);
-  const bottomClass = isIOSChrome 
-    ? 'bottom-[calc(4.5rem+env(safe-area-inset-bottom))]' 
-    : 'bottom-[calc(2.5rem+env(safe-area-inset-bottom))]';
+  const bottomClass = 'bottom-[calc(1rem+env(safe-area-inset-bottom))]';
 
   // Sync bottom bar highlight with book clicking page changes
   useEffect(() => {
