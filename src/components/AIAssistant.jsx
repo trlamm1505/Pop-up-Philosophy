@@ -635,7 +635,7 @@ Yêu cầu về phản hồi: Trả lời khoa học, ngắn gọn, dễ hiểu,
               onClick={() => handleSend('Hãy tóm tắt ngắn gọn các luận điểm cốt lõi nhất của trang sách hiện tại này thành các gạch đầu dòng ngắn.')}
               className="px-2.5 py-1.5 rounded-full bg-[#222220] hover:bg-white/10 text-gray-300 text-xs font-medium cursor-pointer border border-white/5 transition-all active:scale-95 shadow-sm"
             >
-              📝 Tóm tắt bài học
+              📝 Tóm tắt trang này
             </button>
             <button
               onClick={() => handleSend(

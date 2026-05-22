@@ -185,7 +185,17 @@ export default function UI({
 
       {/* Top right pills during active experience */}
       {freeReading ? (
-        <div className="absolute right-4 top-4 md:right-10 md:top-10 pointer-events-auto select-none z-10">
+        <div className="absolute right-4 top-4 md:right-10 md:top-10 pointer-events-auto select-none z-10 flex items-center gap-2 md:gap-3">
+          <button
+            onClick={() => {
+              unlockAudio();
+              setFreeReading(false);
+              setAudioBookActive(true);
+            }}
+            className="bg-white/95 hover:bg-[#b22222] hover:text-white text-gray-800 px-4 py-2 rounded-full border border-gray-200 shadow-lg backdrop-blur-md transition-all duration-300 font-bold text-[10px] tracking-wider uppercase cursor-pointer"
+          >
+            Tự động đọc
+          </button>
           <button
             onClick={() => {
               setStarted(false);
