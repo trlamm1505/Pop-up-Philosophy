@@ -40,6 +40,10 @@ export default function UI({
   ];
 
   const [selectedItemIdx, setSelectedItemIdx] = useState(0);
+  const isIOSChrome = typeof window !== 'undefined' && typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent) && /CriOS/i.test(navigator.userAgent);
+  const bottomClass = isIOSChrome 
+    ? 'bottom-[calc(4.5rem+env(safe-area-inset-bottom))]' 
+    : 'bottom-[calc(2.5rem+env(safe-area-inset-bottom))]';
 
   // Sync bottom bar highlight with book clicking page changes
   useEffect(() => {
@@ -226,7 +230,7 @@ export default function UI({
 
       {/* Mobile Bottom Unified Control Card (only shown in normal mode on mobile) */}
       {!freeReading && (
-        <div className="absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-4 right-4 md:bottom-4 md:hidden pointer-events-auto flex flex-col items-center bg-white/90 backdrop-blur-md border border-gray-200/50 shadow-2xl rounded-3xl px-5 py-3 select-none text-center">
+        <div className={`absolute ${bottomClass} left-4 right-4 md:bottom-4 md:hidden pointer-events-auto flex flex-col items-center bg-white/90 backdrop-blur-md border border-gray-200/50 shadow-2xl rounded-3xl px-5 py-3 select-none text-center`}>
           <span className="text-[9px] font-extrabold text-[#a62c2c] uppercase tracking-widest mb-2.5">
             TRIỂN LÃM 3D
           </span>
@@ -245,7 +249,7 @@ export default function UI({
 
       {/* Free reading mode bottom page selector */}
       {freeReading && (
-        <div className="absolute bottom-[calc(2.5rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 md:bottom-6 bg-white/90 backdrop-blur-md border border-gray-200/50 shadow-xl px-6 py-2.5 rounded-full flex items-center gap-4 pointer-events-auto select-none max-w-[90vw] overflow-x-auto scrollbar-none">
+        <div className={`absolute ${bottomClass} left-1/2 -translate-x-1/2 md:bottom-6 bg-white/90 backdrop-blur-md border border-gray-200/50 shadow-xl px-6 py-2.5 rounded-full flex items-center gap-4 pointer-events-auto select-none max-w-[90vw] overflow-x-auto scrollbar-none`}>
           {bottomBarItems.map((item, idx) => {
             const isSelected = selectedItemIdx === idx;
             return (

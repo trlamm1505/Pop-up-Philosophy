@@ -209,7 +209,7 @@ export default function App() {
   }, [started, freeReading]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-[#eae6df]">
+    <div className="relative w-screen h-dvh overflow-hidden bg-[#eae6df]">
       {/* 3D WebGL Canvas Scene */}
       <div className={`absolute inset-0 w-full h-full ${started ? 'animate__animated animate__zoomInRight' : ''}`} style={started ? { animationDuration: '1.2s' } : {}}>
         <BookScene
