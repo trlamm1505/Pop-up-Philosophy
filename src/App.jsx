@@ -58,6 +58,7 @@ export default function App() {
   const [audioBookActive, setAudioBookActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [manualSpeakingPage, setManualSpeakingPage] = useState(null);
+  const [show3DModels, setShow3DModels] = useState(true);
 
   useEffect(() => {
     if (active || total > 0) {
@@ -218,6 +219,7 @@ export default function App() {
           started={started}
           freeReading={freeReading}
           setFreeReading={setFreeReading}
+          show3DModels={show3DModels}
         />
       </div>
 
@@ -237,6 +239,8 @@ export default function App() {
             setIsMuted={setIsMuted}
             handleReadPageManual={handleReadPageManual}
             manualSpeakingPage={manualSpeakingPage}
+            show3DModels={show3DModels}
+            setShow3DModels={setShow3DModels}
           />
           <AIAssistant
             currentPage={currentPage}

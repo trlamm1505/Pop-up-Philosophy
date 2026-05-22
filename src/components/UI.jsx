@@ -25,7 +25,9 @@ export default function UI({
   isMuted,
   setIsMuted,
   handleReadPageManual,
-  manualSpeakingPage
+  manualSpeakingPage,
+  show3DModels,
+  setShow3DModels
 }) {
   const bottomBarItems = [
     { label: 'BÌA', page: 0 },
@@ -209,7 +211,30 @@ export default function UI({
           </button>
         </div>
       ) : (
-        <div className="hidden md:flex absolute right-10 top-10 pointer-events-auto select-none z-10">
+        <div className="hidden md:flex absolute right-10 top-10 pointer-events-auto select-none z-10 items-center gap-2.5">
+          <button
+            onClick={() => {
+              setShow3DModels(!show3DModels);
+            }}
+            className="bg-white/95 hover:bg-[#b22222] hover:text-white text-gray-800 px-4 py-2 rounded-full border border-gray-200 shadow-lg backdrop-blur-md transition-all duration-300 font-bold text-[10px] tracking-wider uppercase cursor-pointer flex items-center gap-1.5"
+          >
+            {show3DModels ? (
+              <>
+                <svg className="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span>Tắt 3D</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.058m4.096-4.096A9.933 9.933 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21m-7-9a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span>Bật 3D</span>
+              </>
+            )}
+          </button>
           <button
             onClick={() => {
               setFreeReading(true);

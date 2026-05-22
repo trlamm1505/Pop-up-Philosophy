@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import Page from './Page';
 import PopUpModel from './PopUpModel';
 
-export default function Book({ currentPage, setCurrentPage, started, freeReading, setFreeReading }) {
+export default function Book({ currentPage, setCurrentPage, started, freeReading, setFreeReading, show3DModels }) {
   const mainGroupRef = useRef();
   const bookRotationRef = useRef();
   const { gl } = useThree();
@@ -433,7 +433,7 @@ export default function Book({ currentPage, setCurrentPage, started, freeReading
         {/* PHẦN 2: KHỐI MÔ HÌNH 3D (DUY CHUYỂN CÙNG SÁCH, HƯỚNG THẲNG ĐỨNG) */}
         {/* ========================================== */}
 
-        {!isMobileDevice && (
+        {!isMobileDevice && show3DModels && (
           <>
             {/* Trang 1: Monument */}
             <PopUpModel
