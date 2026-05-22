@@ -5,13 +5,16 @@ import * as THREE from 'three';
 import Book from './Book';
 
 export default function BookScene({ currentPage, setCurrentPage, started, freeReading, setFreeReading }) {
+  const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
   return (
     <div className="w-full h-full relative outline-none select-none">
       <Canvas
         shadows
+        dpr={isMobile ? [1, 1.5] : [1, 2]}
         camera={{ position: [0, 1.5, 9], fov: 45 }}
         gl={{ 
-          antialias: true, 
+          antialias: !isMobile, // Disable MSAA antialiasing on mobile for extra performance and memory savings
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.0,
           shadowMapType: THREE.PCFShadowMap
@@ -30,8 +33,8 @@ export default function BookScene({ currentPage, setCurrentPage, started, freeRe
           position={[6, 8, 5]}
           intensity={1.8}
           castShadow
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
+          shadow-mapSize-width={isMobile ? 512 : 2048}
+          shadow-mapSize-height={isMobile ? 512 : 2048}
           shadow-camera-far={20}
           shadow-camera-left={-6}
           shadow-camera-right={6}

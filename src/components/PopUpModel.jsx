@@ -79,6 +79,8 @@ export default function PopUpModel({ active, type, modelPath, customScale = 1.0,
   const [shouldLoad, setShouldLoad] = useState(false);
   const [delayedActive, setDelayedActive] = useState(false);
 
+  const isMobile = typeof window !== 'undefined' && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
   // Trigger loading only when this model becomes active for the first time
   // Also delay the scaling animation by 600ms so it appears after the page flips open
   useEffect(() => {
@@ -93,15 +95,16 @@ export default function PopUpModel({ active, type, modelPath, customScale = 1.0,
     }
   }, [active]);
 
-  // Staggered background preloading to upload model to GPU in the background
+  // Staggered background preloading to upload model to GPU in the background (Disabled on mobile to save RAM)
   useEffect(() => {
+    if (isMobile) return; // Do not preload on mobile devices
     if (preloadDelay) {
       const timer = setTimeout(() => {
         setShouldLoad(true);
       }, preloadDelay);
       return () => clearTimeout(timer);
     }
-  }, [preloadDelay]);
+  }, [preloadDelay, isMobile]);
 
   useFrame((state, delta) => {
     if (groupRef.current) {
