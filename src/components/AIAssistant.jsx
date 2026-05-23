@@ -31,15 +31,15 @@ export default function AIAssistant({ currentPage, started, freeReading }) {
     }
 
     let savedKey = localStorage.getItem('gemini_api_key');
-    if (!savedKey || savedKey === 'null' || savedKey === 'undefined' || !savedKey.startsWith('AIza')) {
-      // Set the user's provided API key as default and save it
-      savedKey = 'AIzaSyA5ixunTcowXo4Wg_HLzDdqC61RLoSNMe0';
+    if (!savedKey || savedKey === 'null' || savedKey === 'undefined' || !savedKey.startsWith('AIza') || savedKey === 'AIzaSyA5ixunTcowXo4Wg_HLzDdqC61RLoSNMe0') {
+      // Set the new user provided API key as default and save it
+      savedKey = 'AIzaSyCOpApUd5vgw767It7owmnTv2H2xBXNBIk';
       localStorage.setItem('gemini_api_key', savedKey);
     }
 
     let savedBackupKey = localStorage.getItem('gemini_api_key_backup');
-    if (!savedBackupKey || savedBackupKey === 'null' || savedBackupKey === 'undefined' || !savedBackupKey.startsWith('AIza')) {
-      savedBackupKey = 'AIzaSyAk4bLRQLR12ECZmsOkDd1ZplV--UyBy-A';
+    if (!savedBackupKey || savedBackupKey === 'null' || savedBackupKey === 'undefined' || !savedBackupKey.startsWith('AIza') || savedBackupKey === 'AIzaSyAk4bLRQLR12ECZmsOkDd1ZplV--UyBy-A') {
+      savedBackupKey = 'AIzaSyCfrfiG14GwL2p-GI0S42-SwHuC12gU4eA';
       localStorage.setItem('gemini_api_key_backup', savedBackupKey);
     }
 
@@ -216,12 +216,11 @@ Yêu cầu về phản hồi: Trả lời khoa học, ngắn gọn, dễ hiểu,
       };
 
       const modelsToTry = [
-        { name: 'gemini-3.5-flash', version: 'v1beta' },
         { name: 'gemini-2.5-flash', version: 'v1beta' },
-        { name: 'gemini-2.5-flash-lite', version: 'v1beta' },
         { name: 'gemini-2.0-flash', version: 'v1beta' },
-        { name: 'gemini-2.0-flash-exp', version: 'v1beta' },
-        { name: 'gemini-2.5-pro', version: 'v1beta' }
+        { name: 'gemini-1.5-flash', version: 'v1beta' },
+        { name: 'gemini-2.5-pro', version: 'v1beta' },
+        { name: 'gemini-1.5-pro', version: 'v1beta' }
       ];
 
       const keysToTry = [apiKey];
@@ -495,15 +494,31 @@ Yêu cầu về phản hồi: Trả lời khoa học, ngắn gọn, dễ hiểu,
               </span>
             </div>
           </div>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="text-gray-400 hover:text-white hover:bg-white/10 p-1.5 rounded-full transition-all duration-200 cursor-pointer active:scale-95 flex items-center justify-center"
-            title="Đóng Trợ lý"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className={`p-1.5 rounded-full transition-all duration-200 cursor-pointer active:scale-95 flex items-center justify-center ${
+                showSettings 
+                  ? 'text-[#ff4500] bg-white/5 border border-white/10' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              }`}
+              title="Cấu hình API Key"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-gray-400 hover:text-white hover:bg-white/10 p-1.5 rounded-full transition-all duration-200 cursor-pointer active:scale-95 flex items-center justify-center"
+              title="Đóng Trợ lý"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* API Settings Overlay */}
@@ -577,6 +592,21 @@ Yêu cầu về phản hồi: Trả lời khoa học, ngắn gọn, dễ hiểu,
                 ) : (
                   <div>
                     {formatMessageText(msg.text, msg.id)}
+                    {(msg.id.startsWith('err-') || msg.id.startsWith('ai-offline-')) && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowSettings(true);
+                        }}
+                        className="mt-3 w-full py-2 px-3 bg-[#b22222]/80 hover:bg-[#b22222] text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer"
+                      >
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Cấu hình API Key của riêng bạn
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
